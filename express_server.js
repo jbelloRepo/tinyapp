@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
-const generateRandomString = function () {
+const generateRandomString = function() {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let randomString = "";
@@ -70,6 +70,18 @@ app.post("/urls", (req, res) => {
 
   console.log(req.body); // Log the POST request body to the console
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;
+
+  // Check if the URL resource exists
+  if (urlDatabase[id]) {
+    delete urlDatabase[id];
+  }
+
+  // Redirect the client back to the urls_index page
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
