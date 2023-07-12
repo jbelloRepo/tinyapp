@@ -84,6 +84,19 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+
+app.post("/urls/:id/edit", (req, res) => {
+  const id = req.params.id;
+  const updatedLongURL = req.body.longURL;
+
+  // Update the value of the stored long URL
+  urlDatabase[id] = updatedLongURL;
+
+  // Redirect the client back to /urls
+  res.redirect("/urls");
+});
+
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
