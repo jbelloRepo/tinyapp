@@ -21,7 +21,8 @@
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
       </div>
-      <div class="card-footer text-muted">
+      <div class="card-footer text-muted text-center">
+        <h3 style="text-align: center;">Edit</h3>
         <form method="POST" action="/urls/<%= id %>/edit" class="form-inline">
           <label class="mr-2" for="longURL">New URL:</label>
           <input
