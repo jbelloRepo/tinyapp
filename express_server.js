@@ -46,8 +46,6 @@ app.get("/urls", (req, res) => {
   };
   // render username of each page
   res.render("urls_index", templateVars);
-  res.render("urls_new", templateVars);
-  res.render("urls_show", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
