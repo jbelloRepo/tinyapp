@@ -93,16 +93,6 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-app.get("/urls/show", (req, res) => {
-  const userId = req.cookies["user_id"];
-  const user = users[userId];
-  const templateVars = {
-    url: urlDatabase,
-    user: user,
-  };
-  res.render("urls_show", templateVars);
-});
-
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
