@@ -38,6 +38,14 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"], // Get username from cookies (if it exists)
+  };
+  res.render("user_register", templateVars); // Replace 'register' with the name of your registration template
+});
+
+
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
