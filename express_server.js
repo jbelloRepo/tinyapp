@@ -168,6 +168,36 @@ function generateRandomId() {
   return crypto.randomBytes(16).toString("hex");
 }
 
+// POST /register endpoint
+app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = generateRandomId();
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).send("Please enter both email and password.");
+  }
+
+  // Check if email already exists
+  for (let userId in users) {
+    if (users[userId].email === email) {
+      return res.status(400).send("Email already registered.");
+    }
+  }
+
+  // Create a new user and add to the users object
+  const newUser = { id, email, password };
+  users[id] = newUser;
+
+  // Set user_id cookie and redirect
+  res.cookie("user_id", id);
+  res.redirect("/urls");
+
+  console.log(users); // Log the users object
+});
+
+
 
 
 
