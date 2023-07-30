@@ -15,18 +15,16 @@
       <% if(user){ %>
         <div style="align-self: flex-end;">
           <p class="navbar-text" style="color: black; font-size: 1.0em; margin-bottom: -10px;">Logged in as: <%=
-              user.email %>!
-          </p>
+              user.email %>!</p>
         </div>
         <form action="/logout" method="POST" class="form-inline my-2 my-lg-0">
           <button class="btn btn-secondary my-2 my-sm-0" type="submit">Logout</button>
         </form>
         <% } else { %>
-          <form action="/login" method="POST" class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Username" name="username" required>
-            <!-- <input class="form-control mr-sm-2" type="password" placeholder="Password" name="password" required> -->
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Login</button>
-          </form>
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/login">Login</a>
+            <a class="nav-item nav-link" href="/register">Register</a>
+          </div>
           <% } %>
     </div>
   </nav>
