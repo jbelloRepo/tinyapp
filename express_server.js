@@ -55,10 +55,13 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-app.get("/urls/show", (req, res) => {
-  const templateVars = {
-    url: urlDatabase,
-    username: req.cookies["username"]
+app.get("/urls/:id", (req, res) => {
+  const id = req.params.id;
+  const longURLParam = urlDatabase[id];
+  const templateVars = { 
+    id: id, 
+    longURL: longURLParam,
+    username: req.cookies["username"],  // pass username to the view
   };
   res.render("urls_show", templateVars);
 });
