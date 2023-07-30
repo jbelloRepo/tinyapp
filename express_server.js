@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
 
 const users = {
@@ -17,7 +17,7 @@ const users = {
   },
 };
 
-const generateRandomString = function() {
+const generateRandomString = function () {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let randomString = "";
@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
+  b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
 
@@ -54,11 +54,10 @@ app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   const templateVars = {
-    user: user
+    user: user,
   };
   res.render("user_register", templateVars); // Replace 'register' with the name of your registration template
 });
-
 
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -76,7 +75,7 @@ app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   const templateVars = {
-    user: user
+    user: user,
   };
   res.render("urls_new", templateVars);
 });
@@ -86,7 +85,7 @@ app.get("/urls/show", (req, res) => {
   const user = users[userId];
   const templateVars = {
     url: urlDatabase,
-    user: user
+    user: user,
   };
   res.render("urls_show", templateVars);
 });
@@ -99,11 +98,10 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: id,
     longURL: longURLParam,
-    user: user // pass username from cookies to the view
+    user: user, // pass username from cookies to the view
   };
   res.render("urls_show", templateVars);
 });
-
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
@@ -150,7 +148,6 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   const updatedLongURL = req.body.longURL;
@@ -162,18 +159,17 @@ app.post("/urls/:id/edit", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post('/login', (req, res) => {
+app.post("/login", (req, res) => {
   // Access submitted username from the request body
   const username = req.body.username;
-  res.cookie('username', username);
-  res.redirect('/urls');
+  res.cookie("username", username);
+  res.redirect("/urls");
 });
 
-app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
-  res.redirect('/urls');
+app.post("/logout", (req, res) => {
+  res.clearCookie("user_id");
+  res.redirect("/urls");
 });
-
 
 function generateRandomId() {
   return crypto.randomBytes(16).toString("hex");
@@ -208,9 +204,16 @@ app.post("/register", (req, res) => {
   console.log(users); // Log the users object
 });
 
+app.get("/login", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId]; // Look up the user data using the user ID from the cookie
+  const templateVars = {
+    user: user, // Pass the entire user object
+    // ... other variables
+  };
 
-
-
+  res.render("user_login", templateVars);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
