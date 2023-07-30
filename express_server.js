@@ -28,6 +28,20 @@ const generateRandomString = function () {
   return randomString;
 };
 
+function getUserByEmail(email, users) {
+  for (let userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+}
+
+function passwordMatches(providedPassword, storedPassword) {
+  return providedPassword === storedPassword;
+}
+
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -67,7 +81,6 @@ app.get("/urls", (req, res) => {
     user: user,
     // ... any other vars
   };
-  // render username of each page
   res.render("urls_index", templateVars);
 });
 
@@ -98,7 +111,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: id,
     longURL: longURLParam,
-    user: user, // pass username from cookies to the view
+    user: user,
   };
   res.render("urls_show", templateVars);
 });
@@ -159,16 +172,32 @@ app.post("/urls/:id/edit", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/login", (req, res) => {
-  // Access submitted username from the request body
-  const username = req.body.username;
-  res.cookie("username", username);
-  res.redirect("/urls");
+app.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = getUserByEmail(email, users); // user object if it exists, otherwise null
+
+  if (!user) {
+    // If the user doesn't exist
+    res.status(403).send('No user with that email found');
+    return;
+  }
+
+  if (!passwordMatches(password, user.password)) {
+    // If the password doesn't match
+    res.status(403).send('Invalid password');
+    return;
+  }
+
+  // On successful login
+  res.cookie('user_id', user.id);
+  res.redirect('/urls');
 });
+
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 function generateRandomId() {
