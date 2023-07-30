@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require('cookie-parser');
+const crypto = require("crypto");
 
 const users = {
   userRandomID: {
@@ -162,6 +163,10 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 });
+
+function generateRandomId() {
+  return crypto.randomBytes(16).toString("hex");
+}
 
 
 
