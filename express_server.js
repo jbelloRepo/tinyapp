@@ -48,8 +48,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 app.get("/", (req, res) => {
@@ -108,7 +114,7 @@ app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   const id = req.params.id;
-  const longURLParam = urlDatabase[id];
+  const longURLParam = urlDatabase[id].longURL;
   const templateVars = {
     id: id,
     longURL: longURLParam,
@@ -121,23 +127,18 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-app.get("/urls/:id", (req, res) => {
-  const id = req.params.id;
-  const longURLParam = urlDatabase[id];
-  const templateVars = { id: id, longURL: longURLParam };
-  res.render("urls_show", templateVars);
-});
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
+  const urlObject = urlDatabase[shortURL];
 
-  if (longURL) {
-    res.redirect(longURL);
+  if (urlObject) {
+    res.redirect(urlObject.longURL);
   } else {
-    res.status(404).send("The URL does not exits");
+    res.status(404).send("The URL does not exist");
   }
 });
+
 
 app.post("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -161,8 +162,8 @@ app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
 
   // Check if the URL resource exists
-  if (urlDatabase[id]) {
-    delete urlDatabase[id];
+  if (urlDatabase[id].longURL) {
+    delete urlDatabase[id].longURL;
   }
 
   // Redirect the client back to the urls_index page
@@ -174,7 +175,7 @@ app.post("/urls/:id/edit", (req, res) => {
   const updatedLongURL = req.body.longURL;
 
   // Update the value of the stored long URL
-  urlDatabase[id] = updatedLongURL;
+  urlDatabase[id].longURL = updatedLongURL;
 
   // Redirect the client back to /urls
   res.redirect("/urls");
@@ -259,12 +260,13 @@ app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
 
   if(urlDatabase[shortURL]) { // If shortURL exists in the database
-    const longURL = urlDatabase[shortURL];
+    const longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
   } else { // If shortURL doesn't exist in the database
     res.status(404).send('This short URL does not exist.');
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
