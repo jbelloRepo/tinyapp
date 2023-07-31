@@ -42,6 +42,17 @@ function passwordMatches(providedPassword, storedPassword) {
   return providedPassword === storedPassword;
 }
 
+function urlsForUser(id) {
+  let urls = {};
+  for(let url in urlDatabase){
+    if(urlDatabase[url].userID === id){
+      urls[url] = urlDatabase[url];
+    }
+  }
+  return urls;
+}
+
+
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
