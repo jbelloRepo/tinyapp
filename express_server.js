@@ -99,12 +99,14 @@ app.get("/register", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
+  const urls = urlsForUser(userId); // get only the URLs for this user
   const templateVars = {
-    urls: urlDatabase,
+    urls: urls,
     user: user,
   };
   res.render("urls_index", templateVars);
 });
+
 
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -125,6 +127,17 @@ app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   const id = req.params.id;
+
+  // If user is not logged in
+  if (!userId) {
+    return res.status(403).send('Please log in to view URLs.');
+  }
+
+  // If URL does not exist or does not belong to the user
+  if (!urlDatabase[id] || urlDatabase[id].userID !== userId) {
+    return res.status(403).send('This URL does not exist or you do not have access to it.');
+  }
+
   const longURLParam = urlDatabase[id].longURL;
   const templateVars = {
     id: id,
@@ -133,6 +146,7 @@ app.get("/urls/:id", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
+
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
@@ -170,20 +184,37 @@ app.post("/urls", (req, res) => {
 
 
 app.post("/urls/:id/delete", (req, res) => {
+  const userId = req.cookies["user_id"];
   const id = req.params.id;
 
-  // Check if the URL resource exists
-  if (urlDatabase[id].longURL) {
-    delete urlDatabase[id].longURL;
+  // If user is not logged in
+  if (!userId) {
+    return res.status(403).send('Please log in to delete URLs.');
   }
 
-  // Redirect the client back to the urls_index page
+  // If URL does not exist or does not belong to the user
+  if (!urlDatabase[id] || urlDatabase[id].userID !== userId) {
+    return res.status(403).send('This URL does not exist or you do not have access to delete it.');
+  }
+
+  delete urlDatabase[id];
   res.redirect("/urls");
 });
 
 app.post("/urls/:id/edit", (req, res) => {
+  const userId = req.cookies["user_id"];
   const id = req.params.id;
   const updatedLongURL = req.body.longURL;
+
+  // If user is not logged in
+  if (!userId) {
+    return res.status(403).send('Please log in to edit URLs.');
+  }
+
+  // If URL does not exist or does not belong to the user
+  if (!urlDatabase[id] || urlDatabase[id].userID !== userId) {
+    return res.status(403).send('This URL does not exist or you do not have permission to edit it.');
+  }
 
   // Update the value of the stored long URL
   urlDatabase[id].longURL = updatedLongURL;
@@ -191,6 +222,7 @@ app.post("/urls/:id/edit", (req, res) => {
   // Redirect the client back to /urls
   res.redirect("/urls");
 });
+
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
