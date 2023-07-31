@@ -85,7 +85,6 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user: user,
-    // ... any other vars
   };
   res.render("urls_index", templateVars);
 });
@@ -251,12 +250,21 @@ app.get("/login", (req, res) => {
   } else { // If the user is not logged in
     const templateVars = {
       user: user, // Pass the entire user object
-      // ... other variables
     };
     res.render("user_login", templateVars);
   }
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+
+  if(urlDatabase[shortURL]) { // If shortURL exists in the database
+    const longURL = urlDatabase[shortURL];
+    res.redirect(longURL);
+  } else { // If shortURL doesn't exist in the database
+    res.status(404).send('This short URL does not exist.');
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
