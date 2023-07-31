@@ -67,11 +67,17 @@ app.get("/hello", (req, res) => {
 app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  const templateVars = {
-    user: user,
-  };
-  res.render("user_register", templateVars); // Replace 'register' with the name of your registration template
+
+  if(user) { // If the user is logged in
+    res.redirect("/urls"); // Redirect them to /urls
+  } else { // If the user is not logged in
+    const templateVars = {
+      user: user,
+    };
+    res.render("user_register", templateVars); 
+  }
 });
+
 
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -226,13 +232,18 @@ app.post("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId]; // Look up the user data using the user ID from the cookie
-  const templateVars = {
-    user: user, // Pass the entire user object
-    // ... other variables
-  };
 
-  res.render("user_login", templateVars);
+  if(user) { // If the user is logged in
+    res.redirect("/urls"); // Redirect them to /urls
+  } else { // If the user is not logged in
+    const templateVars = {
+      user: user, // Pass the entire user object
+      // ... other variables
+    };
+    res.render("user_login", templateVars);
+  }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
