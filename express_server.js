@@ -93,11 +93,17 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  const templateVars = {
-    user: user,
-  };
-  res.render("urls_new", templateVars);
+  
+  if (user) { // If the user is logged in
+    const templateVars = {
+      user: user,
+    };
+    res.render("urls_new", templateVars);
+  } else { // If the user is not logged in
+    res.redirect("/login");
+  }
 });
+
 
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -135,15 +141,22 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL;
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
 
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/${shortURL}`);
+  if(user) { // If user is logged in
+    const shortURL = generateRandomString();
+    const longURL = req.body.longURL;
 
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+    urlDatabase[shortURL] = longURL;
+
+    console.log(req.body); // Log the POST request body to the console
+    res.redirect(`/urls/${shortURL}`);
+  } else { // If user is not logged in
+    res.status(401).send("You need to log in to shorten URLs");
+  }
 });
+
 
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
