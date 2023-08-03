@@ -152,11 +152,12 @@ app.get("/urls/:id", (req, res) => {
   }
 
   // If URL does not exist or does not belong to the user
-  if (!urlDatabase[id] || urlDatabase[id].userID !== userId) {
+  const urlObject = urlDatabase[id];
+  if (!urlObject || urlObject.userID !== userId) {
     return res.status(403).send('This URL does not exist or you do not have access to it.');
   }
 
-  const longURLParam = urlDatabase[id].longURL;
+  const longURLParam = urlObject.longURL; // Get the longURL from the object
   const templateVars = {
     id: id,
     longURL: longURLParam,
@@ -176,7 +177,7 @@ app.get("/u/:id", (req, res) => {
   const urlObject = urlDatabase[shortURL];
 
   if (urlObject) {
-    res.redirect(urlObject.longURL);
+    res.redirect(urlObject.longURL); // Get the longURL from the object
   } else {
     res.status(404).send("The URL does not exist");
   }
@@ -190,7 +191,7 @@ app.post("/urls", (req, res) => {
     const shortURL = generateRandomString();
     const longURL = req.body.longURL;
 
-    urlDatabase[shortURL] = longURL;
+    urlDatabase[shortURL] = {longURL, userID: userId};;
 
     console.log(req.body); // Log the POST request body to the console
     res.redirect(`/urls/${shortURL}`);
