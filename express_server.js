@@ -236,7 +236,7 @@ app.post('/login', (req, res) => {
     return;
   }
 
-  if (!passwordMatches(password, user.password)) {
+  if (!bcrypt.compareSync(password, user.password)) {
     // If the password doesn't match
     res.status(403).send('Invalid password');
     return;
