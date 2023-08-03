@@ -4,7 +4,67 @@ const PORT = 8080; // default port 8080
 const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
+/**
+ * Generates a random alpha-numeric string
+ * @returns {String} randomString
+ */
+const generateRandomString = function () {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let randomString = "";
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters[randomIndex];
+  }
+  return randomString;
+};
+
+/**
+ * 
+ * @param {String} email 
+ * @param {String} users 
+ * @returns user
+ */
+function getUserByEmail(email, users) {
+  for (let userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+}
+
+/**
+ * Authenticates user accounts
+ * @param {*} providedPassword 
+ * @param {*} storedPassword 
+ * @returns Boolean
+ */
+function passwordMatches(providedPassword, storedPassword) {
+  return providedPassword === storedPassword;
+}
+
+/**
+ * 
+ * @param {*} id 
+ * @returns urls
+ */
+function urlsForUser(id) {
+  let urls = {};
+  for(let url in urlDatabase){
+    if(urlDatabase[url].userID === id){
+      urls[url] = urlDatabase[url];
+    }
+  }
+  return urls;
+}
+
+// User object to store new users
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -18,46 +78,6 @@ const users = {
   },
 };
 
-const generateRandomString = function () {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let randomString = "";
-  for (let i = 0; i < 6; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    randomString += characters[randomIndex];
-  }
-  return randomString;
-};
-
-function getUserByEmail(email, users) {
-  for (let userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-}
-
-function passwordMatches(providedPassword, storedPassword) {
-  return providedPassword === storedPassword;
-}
-
-function urlsForUser(id) {
-  let urls = {};
-  for(let url in urlDatabase){
-    if(urlDatabase[url].userID === id){
-      urls[url] = urlDatabase[url];
-    }
-  }
-  return urls;
-}
-
-
-app.set("view engine", "ejs");
-
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 const urlDatabase = {
   b6UTxQ: {
@@ -96,7 +116,6 @@ app.get("/register", (req, res) => {
   }
 });
 
-
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -107,7 +126,6 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
-
 
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -122,7 +140,6 @@ app.get("/urls/new", (req, res) => {
     res.redirect("/login");
   }
 });
-
 
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
@@ -165,7 +182,6 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
-
 app.post("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -182,7 +198,6 @@ app.post("/urls", (req, res) => {
     res.status(401).send("You need to log in to shorten URLs");
   }
 });
-
 
 app.post("/urls/:id/delete", (req, res) => {
   const userId = req.cookies["user_id"];
