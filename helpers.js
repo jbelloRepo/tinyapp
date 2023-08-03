@@ -11,7 +11,6 @@ function getUserByEmail(email, users) {
       return user;
     }
   }
-  return null;
 }
 
 module.exports = { getUserByEmail };
