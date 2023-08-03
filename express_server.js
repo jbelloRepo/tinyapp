@@ -10,6 +10,8 @@ app.use(cookieSession({
   name: 'session',
   keys: ['3f24j2k42k4k2k4', 'b2k4k24242424jk1']
 }));
+const { getUserByEmail } = require('./helpers');
+
 
 /**
  * Generates a random alpha-numeric string
@@ -26,21 +28,7 @@ const generateRandomString = function () {
   return randomString;
 };
 
-/**
- * 
- * @param {String} email 
- * @param {String} users 
- * @returns user
- */
-function getUserByEmail(email, users) {
-  for (let userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-}
+
 
 /**
  * Authenticates user accounts
