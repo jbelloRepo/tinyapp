@@ -82,7 +82,11 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (req.session.user_id) { // if user is logged in
+    res.redirect("/urls");
+  } else { // if user is not logged in
+    res.redirect("/login");
+  }
 });
 
 app.get("/urls.json", (req, res) => {
